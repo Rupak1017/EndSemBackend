@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+
+
+
+// Define the Student model
+model Student {
+  id          Int         @id @default(autoincrement())
+  name        String
+  studentID   String      @unique
+  email       String      @unique
+  password    String
+  registrations  Registration[] // Define the relationship with registrations
+}
+
+// Define the Course model
+model Course {
+  id          Int         @id @default(autoincrement())
+  name        String
+  instructor  String
+  schedule    String
+  registrations  Registration[] // Define the relationship with registrations
+}
+
+// Define the Registration model
+model Registration {
+  id          Int         @id @default(autoincrement())
+  student     Student     @relation(fields: [studentId], references: [id])
+  studentId   Int
+  course      Course      @relation(fields: [courseId], references: [id])
+  courseId    Int
+  registrationDate DateTime   @default(now())
+
+  @@unique([studentId, courseId]) // Ensure uniqueness of student-course pair
+}
+
+
